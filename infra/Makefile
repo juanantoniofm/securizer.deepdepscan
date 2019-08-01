@@ -9,13 +9,16 @@ apply: ## Apply the terraform stuff
 destroy: ## Destroy the terraform stack
 	terraform destroy -auto-approve
 
-init:  ## do stuff to initialize the terraform
+init: .secrets ## do stuff to initialize the terraform
 	terraform init # i guess
-	terraform import aws_key_pair.wakawaka
+	terraform import aws_key_pair.secukey .secrets/ssh_key
+
+.secrets:
+	mkdir -p .secrets
 	@echo "Enter the details for the git ssh that will be used to pull repos"
 	ssh-keygen -t rsa -q -f .secrets/git_ssh_key
 	@echo "Enter the details (no password is recomended) for the git deploy ssh key"
-	ssh-keygen -t rsa -q -f .secrets/git_ssh_key
+	ssh-keygen -t rsa -q -f .secrets/ssh_key
 
 manual-provision:
 	@echo "When everything fails, provision manually"

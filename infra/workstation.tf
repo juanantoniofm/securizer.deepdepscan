@@ -83,7 +83,7 @@ resource "aws_instance" "securizermaster" {
     ]
   }
 
-  key_name               = aws_key_pair.wakawaka.key_name
+  key_name               = aws_key_pair.secukey.key_name
   vpc_security_group_ids = [aws_security_group.open_ssh_sg]
 }
 

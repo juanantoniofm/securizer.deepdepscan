@@ -1,6 +1,6 @@
 # Configure your AWS account details
 region = "eu-west-1"
-profile = "wakaru"
+profile = "myprivateprofile"
 
 # Configure ssh keys for accessing git
 gitkeyfile = ".secrets/git_ssh_key"
