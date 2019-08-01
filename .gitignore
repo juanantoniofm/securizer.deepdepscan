@@ -25,3 +25,7 @@ id_rsa
 
 # MacOS
 .DS_Store
+
+# Terraform
+.terraform
+
