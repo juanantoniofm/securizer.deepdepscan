@@ -9,6 +9,23 @@ resource "aws_key_pair" "secukey" {
   public_key = "${file(".secrets/ssh_key.pub")}" #TODO: replace this with a var name from vars
 }
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-${var.ami_name}-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+
 resource "aws_security_group" "open_ssh_sg" {
   name = "open_ssh_sg"
 
@@ -29,7 +46,7 @@ resource "aws_security_group" "open_ssh_sg" {
 }
 
 resource "aws_instance" "securizermaster" {
-  ami           = var.amis[var.region]
+  ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
   provisioner "file" { # upload the file first so it can be called with arguments
     source      = "provision.sh"

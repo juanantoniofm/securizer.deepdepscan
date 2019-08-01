@@ -6,6 +6,10 @@ variable "region" {
   default = "eu-west-1"
 }
 
+variable "ami_name" {
+  default = "trusty-14.04"
+}
+
 variable amis {
   type = map
   default = {
