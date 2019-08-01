@@ -52,6 +52,7 @@ resource "aws_instance" "securizermaster" {
   provisioner "local-exec" {
     command = "echo [workstation] > ../provision/hosts"
     command = "echo ${aws_instance.example.public_ip} >> ../provision/hosts"
+    command = "cd provision;make run"
   }
 
   provisioner "file" { # upload the file first so it can be called with arguments
