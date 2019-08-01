@@ -50,7 +50,8 @@ resource "aws_instance" "securizermaster" {
   instance_type = "t2.micro"
 
   provisioner "local-exec" {
-    command = "echo ${aws_instance.example.public_ip} > ../provision/inventory"
+    command = "echo [workstation] > ../provision/hosts"
+    command = "echo ${aws_instance.example.public_ip} >> ../provision/hosts"
   }
 
   provisioner "file" { # upload the file first so it can be called with arguments

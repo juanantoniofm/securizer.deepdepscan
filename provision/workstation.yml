@@ -1,0 +1,40 @@
+---
+- hosts: workstation
+  gather_facts: true
+
+- hosts: workstation
+  tasks:
+    - name: Install git
+      apt:
+        pkg: git
+        state: presest
+        update_cache: true
+    - name: Install basic software
+      apt:
+        pkg:[ "vim-nox","tmux","python3","python3-venv","docker.io"]
+        state: presest
+        update_cache: true
+
+    - name: push config
+      template: 
+        src: templates/config.cfg.j2
+        dest: /etc/config
+        mode: 0640
+        owner: ubuntu
+        group: ubuntu
+
+    - name: change a line in a file
+      lineinfile:
+        dest: /home/ubuntu/.vimrc
+        regexp: "^theme"
+        line: "theme=solarized"
+
+
+  handlers:
+    - name: restart docker
+      service:
+        name: docker
+        state: restarted
+
+
+     
