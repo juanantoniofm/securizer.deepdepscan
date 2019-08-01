@@ -1,0 +1,27 @@
+
+-----------------------------------------------------------------------
+-                    A git ignore to rule them all                    -
+-----------------------------------------------------------------------
+
+# Python
+*pyc
+env/
+
+# Vim and Editors
+*swp
+.vscode/
+
+# Standard
+*.log
+archive
+tmp
+.backup
+binaries/
+
+# Secrets
+.secrets/
+secrets.*
+id_rsa
+
+# MacOS
+.DS_Store
