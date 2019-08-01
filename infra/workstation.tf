@@ -48,10 +48,16 @@ resource "aws_security_group" "open_ssh_sg" {
 resource "aws_instance" "securizermaster" {
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
+
+  provisioner "local-exec" {
+    command = "echo ${aws_instance.example.public_ip} > ../provision/inventory"
+  }
+
   provisioner "file" { # upload the file first so it can be called with arguments
     source      = "provision.sh"
     destination = "/tmp/script.sh"
   }
+
   provisioner "file" {
     source      = var.gitkeyfile
     destination = "~/.ssh/id_rsa"
@@ -63,10 +69,12 @@ resource "aws_instance" "securizermaster" {
 
     }
   }
+
   provisioner "file" {
     source      = "${var.gitkeyfile}.pub"
     destination = "~/.ssh/id_rsa.pub"
   }
+
   provisioner "remote-exec" {
     inline = [
       "whoami",
@@ -74,6 +82,7 @@ resource "aws_instance" "securizermaster" {
       "/tmp/script.sh argumentstothescript"
     ]
   }
+
   key_name               = aws_key_pair.wakawaka.key_name
   vpc_security_group_ids = [aws_security_group.open_ssh_sg]
 }
