@@ -1,0 +1,14 @@
+---
+- hosts: workstation
+  gather_facts: true
+
+- hosts: workstation
+  tasks:
+    - name: clone repo
+      git:
+        repo TODO despcan repo url
+        dest: /home/ubuntu/workspace/depscan
+    
+      
+    - name: list containers
+      command: docker ps 
