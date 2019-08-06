@@ -28,6 +28,11 @@
         dest: /home/ubuntu/.vimrc
         regexp: "^theme"
         line: "theme=solarized"
+    - name: clone the dotfiles
+      git:
+          repo: git@bitbucket.org:whimura/dotfiles-stow.git
+          dest: /home/ubuntu/dotfiles
+
 
 
   handlers:
@@ -38,3 +43,4 @@
 
 
      
+
