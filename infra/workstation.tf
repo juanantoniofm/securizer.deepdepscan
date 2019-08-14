@@ -48,49 +48,37 @@ resource "aws_security_group" "open_ssh_sg" {
 resource "aws_instance" "securizermaster" {
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "t2.micro"
-
-  provisioner "local-exec" {
-    command = "echo [workstation] > ../provision/hosts"
-    command = "echo ${aws_instance.example.public_ip} >> ../provision/hosts"
-    command = "cd provision;make run"
-  }
-
-  provisioner "file" { # upload the file first so it can be called with arguments
-    source      = "provision.sh"
-    destination = "/tmp/script.sh"
-  }
-
-  provisioner "file" {
-    source      = var.gitkeyfile
-    destination = "~/.ssh/id_rsa"
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      host        = "${aws_instance.securizermaster.public_ip}"
-      private_key = "${file(".secrets/ssh_key")}"
-
-    }
-  }
-
-  provisioner "file" {
-    source      = "${var.gitkeyfile}.pub"
-    destination = "~/.ssh/id_rsa.pub"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "whoami",
-      "chmod +x /tmp/script.sh",
-      "/tmp/script.sh argumentstothescript"
-    ]
-  }
-
   key_name               = aws_key_pair.secukey.key_name
   vpc_security_group_ids = [aws_security_group.open_ssh_sg]
 }
 
 resource "aws_eip" "ip" {
   instance = aws_instance.securizermaster.id
+}
+
+resource "null_resource" "workaround" {
+  # Provide the key to access the git repositories
+  provisioner "file" {
+    source      = var.gitkeyfile
+    destination = "/home/ubuntu/.ssh/id_rsa"
+
+    connection {
+      type        = "ssh"
+      user = "ubuntu"
+      private_key  = "${file(".secrets/ssh_key")}"
+      host  = "${aws_eip.ip.public_ip}"
+    }
+  }
+
+  # Prepare the local ansible environment
+  provisioner "local-exec" {
+    command = "echo [workstation] > ../provision/hosts"
+    command = "echo ${aws_eip.ip.public_ip} >> ../provision/hosts"
+    command = "cd provision;make run"
+  }
+
+  # TODO: Run ansible.
+
 }
 
 output "eip" {
